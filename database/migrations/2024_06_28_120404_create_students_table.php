@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('class');
             $table->unsignedTinyInteger('level')->index();
-            $table->string('parent_contact');
+            $table->string('parent_contact')->unique();
             $table->timestamps();
         });
     }
