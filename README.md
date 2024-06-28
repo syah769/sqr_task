@@ -4,7 +4,7 @@ A Laravel-based project with authentication using Breeze.
 
 ## Tech Stack
 
-- Laravel 10
+- Laravel 11
 - Alpine.js 3
 - Tailwind CSS
 
