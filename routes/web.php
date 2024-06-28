@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,7 +18,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Students
-    Route::resource('students', Controllers\StudentController::class);
+    Route::name('students.')->group(function () {
+        Route::post('import', [Controllers\StudentController::class, 'import'])->name('import');
+        Route::get('export', [Controllers\StudentController::class, 'export'])->name('export');
+    });
+
+    Route::resource('students', Controllers\StudentController::class)->except('create', 'store', 'show', 'edit', 'update', 'destroy');
 });
 
 require __DIR__ . '/auth.php';
