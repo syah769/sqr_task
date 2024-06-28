@@ -11,6 +11,10 @@
                     <i class="fa-solid fa-download mr-2"></i>
                     Export Students
                 </a>
+                <a href="{{ route('students.template') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 flex items-center">
+                    <i class="fa-solid fa-file-excel mr-2"></i>
+                    Download Template
+                </a>
             </div>
         </div>
     </x-slot>

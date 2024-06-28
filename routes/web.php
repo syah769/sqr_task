@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::name('students.')->group(function () {
         Route::post('import', [Controllers\StudentController::class, 'import'])->name('import');
         Route::get('export', [Controllers\StudentController::class, 'export'])->name('export');
+        Route::get('template', [Controllers\StudentController::class, 'downloadTemplate'])->name('template');
     });
 
     Route::resource('students', Controllers\StudentController::class)->except('create', 'store', 'show', 'edit', 'update', 'destroy');

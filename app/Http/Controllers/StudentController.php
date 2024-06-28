@@ -102,4 +102,14 @@ class StudentController extends Controller
             $request->query('extension', 'csv')
         );
     }
+
+    /**
+     * Download the template for students.
+     */
+    public function downloadTemplate()
+    {
+        $filePath = public_path('templates/student_template.xlsx');
+
+        return response()->download($filePath, 'student_template.xlsx');
+    }
 }
