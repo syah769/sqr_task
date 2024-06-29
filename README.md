@@ -23,3 +23,6 @@ A Laravel-based project with authentication using Breeze.
 
 - Email: admin@sqr.com
 - Password: abcd1234
+
+## Note
+You can try uploading with the file sample_data_students.xlsx that I uploaded.
