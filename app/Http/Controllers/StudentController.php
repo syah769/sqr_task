@@ -80,12 +80,18 @@ class StudentController extends Controller
     public function import(ImportStudentRequest $request, StudentService $studentService)
     {
         try {
-            $importedStudents = $studentService->importFile($request->file('file'));
-            toastr()->success('Successfully imported ' . $importedStudents->count() . ' students.');
+            $result = $studentService->importFile($request->file('file'));
+            $insertedCount = $result['inserted_count'];
+
+            if ($insertedCount > 0) {
+                toastr()->success(__('Successfully imported :count students.', ['count' => $insertedCount]));
+            } else {
+                toastr()->info(__('No new students were imported. All records already exist.'));
+            }
 
             return back();
         } catch (Exception $e) {
-            toastr()->error('Duplicate data are not allowed.');
+            toastr()->error($e->getMessage());
 
             return back();
         } finally {

@@ -48,30 +48,32 @@ class StudentService
 
         if ($balance <= 0) {
             throw new Exception(__('The count of students has exceeded :limit students.', ['limit' => $limit]));
-        } elseif ($rowsCount > $balance) {
-            $data = $data->slice(0, $balance);
         }
 
         $now = now();
 
         $students = $data
-            ->unique('name')
-            ->transform(function (array $row) use ($now) {
-                return [
-                    'name' => $row['name'],
-                    'class' => $row['class'],
-                    'level' => $row['level'],
-                    'parent_contact' => $row['parent_contact'],
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-            });
+            ->unique(fn ($row) => $row['name'] . $row['class'] . $row['level'] . $row['parent_contact'])
+            ->transform(fn (array $row) => [
+                'name' => $row['name'],
+                'class' => $row['class'],
+                'level' => $row['level'],
+                'parent_contact' => $row['parent_contact'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])
+            ->slice(0, $balance);
 
-        $students->chunk(1000)->each(function (Collection $chunk) {
-            Student::insert($chunk->toArray());
-        });
+        $insertedCount = 0;
+        $students->chunk(1000)->each(fn (Collection $chunk) => $chunk->each(
+            fn ($student) => !Student::where('name', $student['name'])
+                ->where('class', $student['class'])
+                ->where('level', $student['level'])
+                ->where('parent_contact', $student['parent_contact'])
+                ->exists() ? (Student::create($student) && $insertedCount++) : null
+        ));
 
-        return $students;
+        return collect(['inserted_count' => $insertedCount]);
     }
 
     /**
