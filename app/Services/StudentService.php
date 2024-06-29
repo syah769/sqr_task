@@ -53,25 +53,39 @@ class StudentService
         $now = now();
 
         $students = $data
-            ->unique(fn ($row) => $row['name'] . $row['class'] . $row['level'] . $row['parent_contact'])
-            ->transform(fn (array $row) => [
-                'name' => $row['name'],
-                'class' => $row['class'],
-                'level' => $row['level'],
-                'parent_contact' => $row['parent_contact'],
-                'created_at' => $now,
-                'updated_at' => $now,
-            ])
-            ->slice(0, $balance);
+            ->unique(function ($row) {
+                return $row['name'] . $row['class'] . $row['level'] . $row['parent_contact'];
+            })
+            ->transform(function (array $row) use ($now) {
+                return [
+                    'name' => $row['name'],
+                    'class' => $row['class'],
+                    'level' => $row['level'],
+                    'parent_contact' => $row['parent_contact'],
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            });
+
+        if ($students->count() > $balance) {
+            $students = $students->slice(0, $balance);
+        }
 
         $insertedCount = 0;
-        $students->chunk(1000)->each(fn (Collection $chunk) => $chunk->each(
-            fn ($student) => !Student::where('name', $student['name'])
-                ->where('class', $student['class'])
-                ->where('level', $student['level'])
-                ->where('parent_contact', $student['parent_contact'])
-                ->exists() ? (Student::create($student) && $insertedCount++) : null
-        ));
+        $students->chunk(1000)->each(function (Collection $chunk) use (&$insertedCount) {
+            $chunk->each(function ($student) use (&$insertedCount) {
+                $exists = Student::where('name', $student['name'])
+                    ->where('class', $student['class'])
+                    ->where('level', $student['level'])
+                    ->where('parent_contact', $student['parent_contact'])
+                    ->exists();
+
+                if (!$exists) {
+                    Student::create($student);
+                    $insertedCount++;
+                }
+            });
+        });
 
         return collect(['inserted_count' => $insertedCount]);
     }
