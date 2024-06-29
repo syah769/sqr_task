@@ -24,5 +24,6 @@ A Laravel-based project with authentication using Breeze.
 - Email: admin@sqr.com
 - Password: abcd1234
 
-## Note
-You can try uploading with the file `sample_data_students.xlsx` that I uploaded.
+## Notes
+- You can try uploading with the file `sample_data_students.xlsx` that I uploaded.
+- You can test the limit of uploaded students by adjusting the `CUSTOM_STUDENT_LIMIT` variable in the `.env` file. For example, set `CUSTOM_STUDENT_LIMIT=100` to allow up to 100 students.
